@@ -83,3 +83,27 @@ body {
 .open .letter img:nth-child(2) { transition-delay: 0.4s; opacity: 1; transform: translateY(0); }
 .open .letter img:nth-child(3) { transition-delay: 0.6s; opacity: 1; transform: translateY(0); }
 .open .letter img:nth-child(4) { transition-delay: 0.8s; opacity: 1; transform: translateY(0); }
+
+@media (max-width: 768px) {
+  .open {
+    flex-direction: column;
+    justify-content: flex-start; /* start the content from top */
+    align-items: center;
+    padding-top: 10vh; /* pushes first image to roughly center of screen */
+    height: 100dvh; /* fix for mobile vh sizing */
+  }
+
+  .letter-wrapper {
+    justify-content: flex-start;
+    height: auto;
+  }
+
+  .letter {
+    gap: 20px;
+  }
+
+  .letter img {
+    width: 90vw; /* use almost full width */
+    max-width: none;
+  }
+}
