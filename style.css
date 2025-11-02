@@ -18,6 +18,7 @@ body {
   perspective: 800px;
 }
 
+/* box expands smoothly */
 .box {
   width: 150px;
   height: 150px;
@@ -29,49 +30,52 @@ body {
   cursor: pointer;
   animation: shake 0.3s ease-in-out infinite alternate;
   animation-delay: 2s;
+  transition: all 0.8s ease; /* smooth expand */
 }
 
-@keyframes shake {
-  0% { transform: rotate(1deg) translate(1px, 1px); }
-  25% { transform: rotate(-1deg) translate(-1px, -1px); }
-  50% { transform: rotate(2deg) translate(2px, -1px); }
-  75% { transform: rotate(-2deg) translate(-1px, 2px); }
-  100% { transform: rotate(1deg) translate(1px, -2px); }
-}
-
-.letter {
-  opacity: 0;
-  transform: scale(0);
-  transition: all 0.5s ease;
-}
-
-.open .letter {
-  opacity: 1;
-  transform: scale(1.2);
-}
-
+/* when opened */
 .open {
   background: #ff7777;
   animation: none;
+  width: 90vw;
+  height: 80vh;
+  border-radius: 20px;
+  justify-content: flex-start;
+  align-items: flex-start;
+  padding: 20px;
+  overflow-y: auto;
 }
 
-/* 👇 ADD THIS PART BELOW 👇 */
 .letter {
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 20px; /* spacing between images */
-  padding: 10px;
+  gap: 16px;
+  width: 100%;
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease;
 }
 
+.open .letter {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* images inside */
 .letter img {
-  width: 300px; /* adjust to your liking */
+  width: 90%;
+  max-width: 320px;
+  height: auto;
   border-radius: 12px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.4);
+  opacity: 0;
+  transform: translateY(20px);
+  transition: all 0.6s ease;
 }
 
-.letter img:hover {
-  transform: scale(1.03);
-  box-shadow: 0 12px 25px rgba(0, 0, 0, 0.4);
-}
+/* image reveal animation (one by one) */
+.open .letter img:nth-child(1) { transition-delay: 0.2s; opacity: 1; transform: translateY(0); }
+.open .letter img:nth-child(2) { transition-delay: 0.4s; opacity: 1; transform: translateY(0); }
+.open .letter img:nth-child(3) { transition-delay: 0.6s; opacity: 1; transform: translateY(0); }
+.open .letter img:nth-child(4) { transition-delay: 0.8s; opacity: 1; transform: translateY(0); }
