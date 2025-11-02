@@ -3,53 +3,31 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Box -> Centered First Image</title>
+<title>Box Reveal</title>
 <style>
-  :root {
-    --bg:#111;
-    --gap:20px;
-    --imgMax:420px;
-    --fadeTime:0.6s;
-  }
-
-  html,body {
-    height:100%;
-    margin:0;
-    padding:0;
-    background:var(--bg);
-    font-family:Poppins,sans-serif;
-  }
-
-  .page {
-    height:100vh;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    overflow:hidden;
-  }
-
-  .container {
-    width:280px;
-    height:280px;
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    position:relative;
+  body {
+    margin: 0;
+    height: 100vh;
+    background: #111;
+    font-family: Poppins, sans-serif;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
   }
 
   .box {
-    width:100%;
-    height:100%;
-    border-radius:18px;
+    width: 200px;
+    height: 200px;
     background: linear-gradient(180deg,#ff9fa3,#ff6b6b);
+    border-radius: 18px;
     box-shadow: 0 12px 30px rgba(0,0,0,0.45);
-    display:flex;
-    align-items:center;
-    justify-content:center;
-    cursor:pointer;
-    user-select:none;
-    font-weight:700;
-    color:#222;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #222;
+    font-weight: 700;
+    cursor: pointer;
     animation: shake 1.2s infinite ease-in-out;
     transition: opacity .5s ease;
   }
@@ -61,34 +39,112 @@
     75%{ transform: rotate(1deg); }
   }
 
-  .box.fade-out { opacity:0; pointer-events:none; }
+  .box.fade-out { opacity: 0; }
 
   .images {
     position: fixed;
     inset: 0;
+    background: #070707;
     display: none;
     flex-direction: column;
     align-items: center;
-    gap: var(--gap);
-    background: #070707;
-    padding: 40px 16px;
-    box-sizing: border-box;
+    justify-content: flex-start;
+    padding: 40px 0;
     overflow-y: auto;
-    -webkit-overflow-scrolling: touch;
-    scroll-behavior: smooth;
-    z-index: 9999;
+    gap: 20px;
   }
 
-  .images.show { display:flex; }
+  .images.show { display: flex; }
 
   .images img {
     width: 90vw;
-    max-width: var(--imgMax);
-    height: auto;
-    border-radius:12px;
+    max-width: 420px;
+    border-radius: 12px;
     box-shadow: 0 12px 30px rgba(0,0,0,0.6);
-    background: #fff;
-    display:block;
-    opacity:0;
-    transform: translateY(30px);
-    transition: opacity var(--fadeTime) ease, transform var(--fadeTime
+    opacity: 0;
+    transform: translateY(20px);
+    transition: opacity .6s ease, transform .6s ease;
+  }
+
+  .images img.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .closeBtn {
+    position: fixed;
+    top: 18px;
+    right: 16px;
+    background: rgba(255,255,255,0.06);
+    color:#fff;
+    border:none;
+    padding:8px 12px;
+    border-radius:8px;
+    backdrop-filter: blur(6px);
+    cursor:pointer;
+    font-weight:600;
+  }
+</style>
+</head>
+<body>
+  <div class="box" id="box">💌 Tap to open</div>
+
+  <div class="images" id="images">
+    <button class="closeBtn" id="closeBtn">Close ✕</button>
+    <img src="1.png" alt="1">
+    <img src="2.png" alt="2">
+    <img src="3.png" alt="3">
+    <img src="4.png" alt="4">
+  </div>
+
+  <audio id="bgMusic" src="music.mp3" preload="auto" loop></audio>
+
+<script>
+  const box = document.getElementById('box');
+  const images = document.getElementById('images');
+  const closeBtn = document.getElementById('closeBtn');
+  const imgs = images.querySelectorAll('img');
+  const bgMusic = document.getElementById('bgMusic');
+
+  function fadeInImages() {
+    imgs.forEach((img, i) => {
+      setTimeout(() => img.classList.add('visible'), i * 400);
+    });
+  }
+
+  function openImages() {
+    box.classList.add('fade-out');
+    setTimeout(() => {
+      box.style.display = 'none';
+      images.classList.add('show');
+      fadeInImages();
+      playMusic();
+    }, 500);
+  }
+
+  function playMusic() {
+    bgMusic.volume = 0;
+    bgMusic.play().then(() => {
+      let v = 0;
+      const fade = setInterval(() => {
+        v += 0.02;
+        bgMusic.volume = Math.min(v, 0.4);
+        if (v >= 0.4) clearInterval(fade);
+      }, 100);
+    }).catch(() => {});
+  }
+
+  function closeImages() {
+    images.classList.remove('show');
+    imgs.forEach(img => img.classList.remove('visible'));
+    box.style.display = 'flex';
+    box.classList.remove('fade-out');
+    bgMusic.pause();
+    bgMusic.currentTime = 0;
+  }
+
+  box.addEventListener('click', openImages);
+  closeBtn.addEventListener('click', closeImages);
+</script>
+</body>
+</html>
