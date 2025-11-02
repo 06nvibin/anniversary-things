@@ -1,0 +1,56 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: #111;
+  font-family: 'Poppins', sans-serif;
+  color: white;
+}
+
+.container {
+  perspective: 800px;
+}
+
+.box {
+  width: 150px;
+  height: 150px;
+  background: #ff4747;
+  border-radius: 16px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
+  animation: shake 0.3s ease-in-out infinite alternate;
+  animation-delay: 2s;
+}
+
+@keyframes shake {
+  0% { transform: rotate(1deg) translate(1px, 1px); }
+  25% { transform: rotate(-1deg) translate(-1px, -1px); }
+  50% { transform: rotate(2deg) translate(2px, -1px); }
+  75% { transform: rotate(-2deg) translate(-1px, 2px); }
+  100% { transform: rotate(1deg) translate(1px, -2px); }
+}
+
+.letter {
+  opacity: 0;
+  transform: scale(0);
+  transition: all 0.5s ease;
+}
+
+.open .letter {
+  opacity: 1;
+  transform: scale(1.2);
+}
+
+.open {
+  background: #ff7777;
+  animation: none;
+}
