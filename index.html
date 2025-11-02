@@ -3,54 +3,99 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Box Layout Fix</title>
+  <title>Letter Box</title>
   <style>
     body {
       margin: 0;
-      background: #111;
       height: 100vh;
+      background: #111;
       display: flex;
       justify-content: center;
       align-items: center;
-    }
-
-    .container {
-      display: grid;
-      grid-template-columns: repeat(2, 1fr);
-      grid-template-rows: repeat(2, 1fr);
-      gap: 10px;
-      width: 90vw;
-      max-width: 600px;
-      aspect-ratio: 1 / 1;
       overflow: hidden;
     }
 
-    .container img {
+    .container {
+      position: relative;
+      width: 280px;
+      height: 280px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .box {
       width: 100%;
       height: 100%;
-      object-fit: cover;
-      border-radius: 10px;
-      transition: transform 0.3s ease;
+      background: pink;
+      border-radius: 20px;
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
+      animation: shake 1s infinite ease-in-out;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      font-family: "Poppins", sans-serif;
+      font-weight: 600;
+      color: #333;
     }
 
-    .container img:hover {
-      transform: scale(1.05);
+    @keyframes shake {
+      0%, 100% { transform: rotate(0deg); }
+      25% { transform: rotate(1deg); }
+      50% { transform: rotate(-1deg); }
+      75% { transform: rotate(1deg); }
     }
 
-    @media (max-width: 768px) {
-      .container {
-        width: 95vw;
-        max-width: none;
-      }
+    .images {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow-y: auto;
+      background: #111;
+      justify-content: flex-start;
+      padding-top: 20px;
+      box-sizing: border-box;
+    }
+
+    .images img {
+      width: 90%;
+      max-width: 400px;
+      border-radius: 12px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5);
+    }
+
+    .show {
+      display: flex;
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <img src="1.png" alt="Image 1">
-    <img src="2.png" alt="Image 2">
-    <img src="3.png" alt="Image 3">
-    <img src="4.png" alt="Image 4">
+  <div class="container" id="container">
+    <div class="box" id="box">💌 Tap to Open</div>
+    <div class="images" id="images">
+      <img src="1.png" alt="Image 1">
+      <img src="2.png" alt="Image 2">
+      <img src="3.png" alt="Image 3">
+      <img src="4.png" alt="Image 4">
+    </div>
   </div>
-</body>
-</html>
+
+  <script>
+    const box = document.getElementById('box');
+    const images = document.getElementById('images');
+
+    box.addEventListener('click', () => {
+      box.style.display = 'none';
+      images.classList.add('show');
+      document.body.style.overflow = 'auto';
+      window.scrollTo(0, 0);
+    });
+  </script>
+</
