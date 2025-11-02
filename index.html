@@ -3,23 +3,54 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Shaking Box Surprise</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Centered Image Gallery</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background: #111;
+    }
+
+    .gallery {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      scroll-behavior: smooth;
+    }
+
+    .gallery img {
+      width: 100%;
+      height: auto;
+      flex-shrink: 0;
+      object-fit: contain;
+    }
+  </style>
 </head>
 <body>
-  <div class="container">
-  <div class="box" id="box">
-    <div class="letter-wrapper">
-      <div class="letter" id="letter">
-        <img src="1.png" alt="">
-        <img src="2.png" alt="">
-        <img src="3.png" alt="">
-        <img src="4.png" alt="">
-      </div>
-    </div>
+  <div class="gallery" id="gallery">
+    <img src="1.png" alt="Image 1" id="first">
+    <img src="2.png" alt="Image 2">
+    <img src="3.png" alt="Image 3">
+    <img src="4.png" alt="Image 4">
   </div>
-  </div>
-  <audio id="bg-music" src="music.mp3" preload="auto"></audio>
-  <script src="script.js"></script>
+
+  <script>
+    // Ensure first image (1.png) is shown centered when the page loads
+    window.addEventListener("load", () => {
+      const gallery = document.getElementById("gallery");
+      const firstImage = document.getElementById("first");
+      const offset = firstImage.offsetLeft - (window.innerWidth - firstImage.offsetWidth) / 2;
+      gallery.scrollLeft = offset;
+    });
+  </script>
 </body>
 </html>
