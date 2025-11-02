@@ -1,101 +1,198 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Letter Box</title>
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      background: #111;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      overflow: hidden;
-    }
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Box -> Centered First Image</title>
+<style>
+  :root{ --bg:#111; --gap:20px; --imgMax:420px; }
 
-    .container {
-      position: relative;
-      width: 280px;
-      height: 280px;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      cursor: pointer;
-    }
+  html,body{ height:100%; margin:0; padding:0; background:var(--bg); font-family: Poppins, sans-serif; }
 
-    .box {
-      width: 100%;
-      height: 100%;
-      background: pink;
-      border-radius: 20px;
-      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.4);
-      animation: shake 1s infinite ease-in-out;
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: "Poppins", sans-serif;
-      font-weight: 600;
-      color: #333;
-    }
+  /* page center with the box */
+  .page {
+    height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    overflow:hidden; /* we will allow scroll inside .images only */
+  }
 
-    @keyframes shake {
-      0%, 100% { transform: rotate(0deg); }
-      25% { transform: rotate(1deg); }
-      50% { transform: rotate(-1deg); }
-      75% { transform: rotate(1deg); }
-    }
+  .container {
+    width:280px;
+    height:280px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    position:relative;
+  }
 
-    .images {
-      display: none;
-      flex-direction: column;
-      align-items: center;
-      gap: 20px;
-      position: absolute;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      overflow-y: auto;
-      background: #111;
-      justify-content: flex-start;
-      padding-top: 20px;
-      box-sizing: border-box;
-    }
+  .box {
+    width:100%;
+    height:100%;
+    border-radius:18px;
+    background: linear-gradient(180deg,#ff9fa3,#ff6b6b);
+    box-shadow: 0 12px 30px rgba(0,0,0,0.45);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    cursor:pointer;
+    user-select:none;
+    font-weight:700;
+    color:#222;
+    animation: shake 1.2s infinite ease-in-out;
+  }
 
-    .images img {
-      width: 90%;
-      max-width: 400px;
-      border-radius: 12px;
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5);
-    }
+  @keyframes shake {
+    0%{ transform: rotate(0deg); }
+    25%{ transform: rotate(1deg); }
+    50%{ transform: rotate(-1deg); }
+    75%{ transform: rotate(1deg); }
+    100%{ transform: rotate(0deg); }
+  }
 
-    .show {
-      display: flex;
-    }
-  </style>
+  /* full-screen image area that appears after clicking */
+  .images {
+    position: fixed;
+    inset: 0;                   /* full screen */
+    display: none;             /* show when .show added */
+    flex-direction: column;
+    align-items: center;
+    gap: var(--gap);
+    background: #070707;
+    padding: 40px 16px;        /* breathing room top+bottom */
+    box-sizing: border-box;
+    overflow-y: auto;          /* allow scrolling through pages */
+    -webkit-overflow-scrolling: touch;
+    scroll-behavior: smooth;
+    z-index: 9999;
+  }
+
+  .images.show { display:flex; }
+
+  /* ensure the first image can be centered easily and others are below */
+  .images .first {
+    display:flex;
+    width:100%;
+    justify-content:center;
+    align-items:center;
+    /* we don't set a fixed height here; we center via JS */
+  }
+
+  .images img {
+    width: 90vw;
+    max-width: var(--imgMax);
+    height: auto;
+    border-radius:12px;
+    box-shadow: 0 12px 30px rgba(0,0,0,0.6);
+    background: #fff; /* helpful if PNGs have transparency */
+    display:block;
+  }
+
+  /* slightly smaller gap on tiny screens */
+  @media (max-width:360px) {
+    .images { padding: 28px 10px; gap:16px; }
+  }
+
+  /* close hint / button */
+  .closeBtn {
+    position: fixed;
+    top: 18px;
+    right: 16px;
+    z-index:10000;
+    background: rgba(255,255,255,0.06);
+    color:#fff;
+    border: none;
+    padding:8px 12px;
+    border-radius:8px;
+    backdrop-filter: blur(6px);
+    cursor:pointer;
+    font-weight:600;
+  }
+</style>
 </head>
 <body>
-  <div class="container" id="container">
-    <div class="box" id="box">💌 Tap to Open</div>
-    <div class="images" id="images">
-      <img src="1.png" alt="Image 1">
-      <img src="2.png" alt="Image 2">
-      <img src="3.png" alt="Image 3">
-      <img src="4.png" alt="Image 4">
+  <div class="page">
+    <div class="container">
+      <div class="box" id="box">💌 Tap to open</div>
     </div>
   </div>
 
-  <script>
-    const box = document.getElementById('box');
-    const images = document.getElementById('images');
+  <!-- full-screen images -->
+  <div class="images" id="images">
+    <button class="closeBtn" id="closeBtn">Close ✕</button>
+    <div class="first">
+      <img id="img1" src="1.png" alt="1">
+    </div>
 
-    box.addEventListener('click', () => {
-      box.style.display = 'none';
-      images.classList.add('show');
-      document.body.style.overflow = 'auto';
-      window.scrollTo(0, 0);
+    <img src="2.png" alt="2">
+    <img src="3.png" alt="3">
+    <img src="4.png" alt="4">
+  </div>
+
+<script>
+  const box = document.getElementById('box');
+  const images = document.getElementById('images');
+  const img1 = document.getElementById('img1');
+  const closeBtn = document.getElementById('closeBtn');
+
+  function openImages() {
+    // show the fullscreen images container
+    images.classList.add('show');
+
+    // lock body scroll to avoid double-scroll issues (scroll inside .images only)
+    document.body.style.overflow = 'hidden';
+
+    // ensure layout has painted, then center the first image vertically
+    // use requestAnimationFrame twice for reliability on mobile
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        centerFirstImage();
+      });
     });
-  </script>
-</
+  }
+
+  function centerFirstImage() {
+    // center the first img vertically inside the viewport
+    // compute offsetTop relative to the scroll container and set scrollTop appropriately
+    const first = img1;
+    const container = images;
+
+    // if the image hasn't fully loaded yet, wait for it
+    if (!first.complete) {
+      first.onload = () => centerFirstImage();
+      return;
+    }
+
+    // top position of the image relative to the container's content
+    const imgTop = first.offsetTop; // offset relative to .images
+    const imgHeight = first.clientHeight;
+    const viewportHeight = window.innerHeight;
+
+    // desired scroll so that the image is vertically centered
+    const desiredScroll = imgTop - ((viewportHeight - imgHeight) / 2);
+
+    // clamp to valid range
+    const maxScroll = container.scrollHeight - container.clientHeight;
+    const clamped = Math.max(0, Math.min(desiredScroll, maxScroll));
+
+    container.scrollTo({ top: clamped, behavior: 'smooth' });
+  }
+
+  function closeImages() {
+    images.classList.remove('show');
+    document.body.style.overflow = ''; // restore
+    // tiny delay then scroll to top in case reopened
+    setTimeout(()=> images.scrollTo({top:0}), 80);
+  }
+
+  box.addEventListener('click', openImages);
+  closeBtn.addEventListener('click', closeImages);
+
+  // also close on ESC
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && images.classList.contains('show')) closeImages();
+  });
+</script>
+</body>
+</html>
